@@ -270,7 +270,7 @@ void *mm_realloc(void *ptr, size_t size)
         return mm_malloc(size);
    }
 
-   else if(size ==0){
+   else if(size == 0){
         mm_free(ptr);
         return NULL;
    }
