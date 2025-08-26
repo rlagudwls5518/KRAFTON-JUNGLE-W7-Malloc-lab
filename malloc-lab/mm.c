@@ -219,39 +219,39 @@ void *coalesce(void *ptr){
 
     }
     //연결 했을경우 next fit의 포인터 수정이 필요하다!!
-    next_fit_ptr = ptr;
+    // next_fit_ptr = ptr;
     return ptr;
 
 }
 
 // next_fit
-void *find_fit(size_t asize){ 
+// void *find_fit(size_t asize){ 
     
-    void *ptr;
+//     void *ptr;
     
 
-    // 다음 포인터 부터 시작 -> 에필로그까지
-    for(ptr = next_fit_ptr; GET_SIZE(HDRP(ptr)) > 0; ptr = NEXT_BLKP(ptr)){
+//     // 다음 포인터 부터 시작 -> 에필로그까지
+//     for(ptr = next_fit_ptr; GET_SIZE(HDRP(ptr)) > 0; ptr = NEXT_BLKP(ptr)){
 
-        //할당 ㄴㄴ and 추가하려는 사이즈보다 블록사이즈가 더 큰 경우 -> 가능
-        if(!GET_ALLOC(HDRP(ptr)) && (asize <= GET_SIZE(HDRP(ptr)))){
-            next_fit_ptr = ptr;
-            return ptr;
-        }
-    }
-    // 만약 다음포인터부터 끝까지 찾았는데 없다면 
-    // 처음부터 next까지 탐색
+//         //할당 ㄴㄴ and 추가하려는 사이즈보다 블록사이즈가 더 큰 경우 -> 가능
+//         if(!GET_ALLOC(HDRP(ptr)) && (asize <= GET_SIZE(HDRP(ptr)))){
+//             next_fit_ptr = ptr;
+//             return ptr;
+//         }
+//     }
+//     // 만약 다음포인터부터 끝까지 찾았는데 없다면 
+//     // 처음부터 next까지 탐색
 
-    while(ptr < next_fit_ptr){
-        ptr = NEXT_BLKP(ptr);
-        //할당 ㄴㄴ and 추가하려는 사이즈보다 블록사이즈가 더 큰 경우 -> 가능
-        if(!GET_ALLOC(HDRP(ptr)) && (asize <= GET_SIZE(HDRP(ptr)))){
-            next_fit_ptr = ptr;
-            return ptr;
-        }
-    }
-    return NULL;
-}
+//     while(ptr < next_fit_ptr){
+//         ptr = NEXT_BLKP(ptr);
+//         //할당 ㄴㄴ and 추가하려는 사이즈보다 블록사이즈가 더 큰 경우 -> 가능
+//         if(!GET_ALLOC(HDRP(ptr)) && (asize <= GET_SIZE(HDRP(ptr)))){
+//             next_fit_ptr = ptr;
+//             return ptr;
+//         }
+//     }
+//     return NULL;
+// }
 
 //first_fit
 // void *find_fit(size_t asize){
@@ -269,12 +269,23 @@ void *find_fit(size_t asize){
 
 
 //best_fit
-// void *find_fit(size_t asize){
+void *find_fit(size_t asize){
 
-// 딱맞는 블록을 찾을 경우
-// 딱맞는 블록을 못찾을때는 내부 단편화가 최소인 블록을 찾기
+    void * ptr;
+    void * best_ptr = NULL;
 
-// }
+    for (ptr = heap_listp; GET_SIZE(HDRP(ptr)) > 0; ptr = NEXT_BLKP(ptr)){
+        
+        if(!GET_ALLOC(HDRP(ptr)) &&(GET_SIZE(HDRP(ptr)) >= asize)){ // 블록크기가 충분히 큰지
+
+            //(블록크기 - 요청크기)
+            if(best_ptr == NULL || GET_SIZE(HDRP(ptr)) < GET_SIZE(HDRP(best_ptr))){
+                best_ptr = ptr;
+            }     
+        }
+    }
+    return best_ptr;
+}
 
 // 배치 정책에따라 포인터를 이동시켜서 공간을 얼마나 더 빽빽하게 쓰는지
 void place(void *ptr, size_t newsize){
@@ -292,12 +303,10 @@ void place(void *ptr, size_t newsize){
         // 앞 블록의 푸터
         PUT(FTRP(ptr), PACK(newsize, 1));
 
-        ptr = NEXT_BLKP(ptr);
-
         // 뒷 헤더 만들기
-        PUT(HDRP(ptr), PACK(rest_size, 0));
+        PUT(HDRP(NEXT_BLKP(ptr)), PACK(rest_size, 0));
         // 뒷 블록의 푸터 만들기
-        PUT(FTRP(ptr), PACK(rest_size, 0));
+        PUT(FTRP(NEXT_BLKP(ptr)), PACK(rest_size, 0));
     }
 
     else{
