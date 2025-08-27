@@ -108,7 +108,7 @@ int mm_init(void)
     //(4) 힙 확장하기(CHUNKSIZE : 4096바이트로 인식)
     if(extend_heap(CHUNKSIZE/WSIZE) == NULL)return -1;
 
-    next_fit_ptr = heap_listp; 
+    next_fit_ptr = heap_listp; // 시작지점 초기화
     return 0;
 }
 

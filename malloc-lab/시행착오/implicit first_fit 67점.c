@@ -86,7 +86,7 @@ team_t team = {
 static char *heap_listp; // 첫 블록을 가리킴
 
 /*
- * mm_init  할당기 초기화 하는 함수 성곡하면 0 아니면 -1리턴
+ * mm_init 할당기 초기화 하는 함수 성공하면 0 아니면 -1 리턴
  */
 int mm_init(void)
 {
@@ -154,7 +154,6 @@ void *mm_malloc(size_t size)
         place(ptr, asize);
         return ptr;
     }
-
     //맞는 칸이 없으면 힙 연장
     extend_size = MAX(asize, CHUNKSIZE); 
     ptr = extend_heap(extend_size / WSIZE);
@@ -162,7 +161,6 @@ void *mm_malloc(size_t size)
     if (ptr == NULL){
         return NULL;
     }
-
     place(ptr, asize);
     return ptr;
 }
@@ -269,15 +267,12 @@ void *mm_realloc(void *ptr, size_t size)
    if(ptr == NULL){
         return mm_malloc(size);
    }
-
    else if(size == 0){
         mm_free(ptr);
         return NULL;
    }
 
-
    void *old_ptr = ptr;
-
    void *new_ptr = mm_malloc(size);
 
    size_t copy_size = GET_SIZE(HDRP(ptr));
@@ -286,9 +281,7 @@ void *mm_realloc(void *ptr, size_t size)
 
 
    memcpy(new_ptr, old_ptr, copy_size); // 이전 블록의 내용을 새블록으로 복사
-
    mm_free(old_ptr); // 이전블록에 할당된 메모리는 free
 
    return new_ptr;
-
 }
