@@ -27,7 +27,9 @@ void mem_init(void)
 {
     /* allocate the storage we will use to model the available VM */
     // config.h에 정의되어 있음, #define MAX_HEAP (20*(1<<20)) : 20971520bytes == 20 MB
-    // 먼저 20MB만큼의 MAX_HEAP을 malloc으로 동적할당해온다. 만약 메모리를 불러오는데 실패했다면 에러 메세지를 띄우고 프로그램을 종료한다.
+    // 먼저 20MB만큼의 MAX_HEAP을 malloc으로 동적할당해온다. 만약 메모리를 불러오는데 실패했다면
+    // 에러 메세지를 띄우고 프로그램을 종료한다.
+    
     // 그 시작점을 mem_start_brk라 한다.
     // 아직 힙이 비어 있으므로 mem_brk도 mem_start_brk와 같다.
 
